@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+{% block top-content %}
+{% endblock %}
+
+{% for post in Posts %}
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ post.owner.image.url }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="{% url 'profile' post.owner.username %}">{{ post.owner.username }}</a>
+        <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+      </div>
+      <h1><a class="article-title" href="{% url 'post_detail' post.id %}">{{post.title}}</a></h1>
+      <div class='row'>
+        <div class="col-md-8">
+            <div class='post-content'>
+              <p class="text-justify" class="article-content">{{post.description}}</p>   
+            </div>
+        </div>
+        <div class="col-md-4">
+          <div class='post-img'>
+            <img class="img-fluid" src="{{ post.thumbnail_image.url }}">
+          </div>
+        </div>
+      </div>
+      <div class="btn-toolbar py-3">
+        <a  class="btn btn-success btn-md px-5 mr-3" href="{{ post.uploaded_file.url }}">Download</a>
+        {% if post.owner == user %}
+          <a  class="btn btn-primary btn-md px-5 mr-3" href="{% url 'post_update' post.id %}" >Update</a>
+          <a  class="btn btn-danger btn-md px-5 mr-3" href="{% url 'post_delete' post.id %}" >Delete</a>
+        {% endif %} 
+      </div>
+    </div>
+  </article>
+{% endfor %}
+{% endblock content %}

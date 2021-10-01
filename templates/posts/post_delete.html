@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Delete File</h1>
+    <div>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2>Are you sure you want to delete the post {{object.title}}?</h2>
+            <button type="submit">Yes, delete</button>
+            <button> <a "ml-2" href="{% url 'post_detail' object.id %}">Cancel</a> </button>
+        </form>
+    </div>
+{% endblock content %}

@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'posts/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-social.css' %}">
+    <script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
+
+    {% if title %}
+        <title>Django Blog - {{ title }}</title>
+    {% else %}
+        <title>Django Blog</title>
+    {% endif %}
+
+</head>
+
+<body>
+    <header class="site-header">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-color navbar-dark py-4 fixed-top">
+        <div class="container">
+          <a href="{% url 'home' %}" class="navbar-brand">FileShare</a>
+          <div class="collapse navbar-collapse" id="navmenu">
+            <ul class="navbar-nav ml-auto">
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'profile_update' user.username %}">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'post_create' %}">New Post</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'signup' %}">Signup</a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    {% url 'home' as home_url %}
+    {% url 'post_search' as search_url %} 
+    {% if request.path == home_url or request.path == search_url %}
+      <section class="section-color text-light p-5 p-lg-0 pt-lg-5 text-center text-sm-start">
+        <div class="container">
+          <div class="d-sm-flex align-items-center justify-content-between">
+            <div>
+              <h1><span class="text-warning"> Share Files Seamlessly </span></h1>
+              <p class="lead my-4">
+                FileShare is a free search engine which allows you to search, preview and download millions of files into your devices
+              </p>
+              <form action="{% url 'post_search' %}"  class="form-inline justify-content-center pb-3" method="GET">
+                <input class="form-control mr-sm-2" id='q' value="{{ request.GET.q }}" type="text" aria-label="Search" name="q">
+                <button id="search_button" class="btn btn-primary my-2 my-sm-0" type="button">Search</button>
+              </form>
+            </div>
+            <img
+              class="img-fluid w-50 d-none d-sm-block"
+              src="{% static 'fileshare.svg' %}"
+              alt=""
+            />
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    <main role="main" class="container pt-4 pb-5" id="my_container" data-url="">
+      <div class="row">
+        <div class="col-md-12">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script>
+        let fetchBtn = document.getElementById("search_button");
+  
+        fetchBtn.addEventListener("click", buttonclickhandler);
+
+        function buttonclickhandler() {
+  
+          // Instantiate an new XHR Object
+          const xhr = new XMLHttpRequest();
+
+          // Open an obejct (GET/POST, PATH,
+          // ASYN-TRUE/FALSE)
+          let query = document.getElementById("q").value;      
+          console.log(query)
+          let base_url = "http://127.0.0.1:8000"
+          xhr.open("GET", base_url +"/api/search/?q=" + query, true);
+
+          // When response is ready
+          xhr.onload = function () {
+            if (this.status === 200) {
+
+                  // Changing string data into JSON Object
+                  obj = JSON.parse(this.responseText);
+    
+                  // Getting the ul element
+                  let list = document.getElementById("my_container");
+                  
+                  list.innerHTML = `
+                  ${ obj.map(function(post){
+                    return `
+                    <article class="media content-section">
+                      <img class="rounded-circle article-img" src="${ post.owner.image }">
+                      <div class="media-body">
+                        <div class="article-metadata">
+                          <a class="mr-2" href="${ post.owner.profile_url }">${ post.owner.username }</a>
+                          <small class="text-muted">${ post.date_posted }</small>
+                        </div>
+                        <h1><a class="article-title" href="${ post.post_url }">${post.title}</a></h1>
+                        <div class='row'>
+                          <div class="col-md-8">
+                              <div class='post-content'>
+                                <p class="text-justify" class="article-content">${post.description}</p>   
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class='post-img'>
+                              <img class="img-fluid" src="${ post.thumbnail_image }">
+                            </div>
+                          </div>
+                        </div>
+                      <div class="btn-toolbar py-3">
+                          <a  class="btn btn-success btn-md px-5 mr-3" href="${ post.uploaded_file }">Download</a>
+                        </div>
+                      </div>
+                    </article>
+                    `
+                  }
+                  )
+                  }  
+                  `;
+                  console.log(obj)
+              }
+              else {
+                  console.log("File not found");
+              }
+            }
+            xhr.send();
+        }
+    </script>
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
