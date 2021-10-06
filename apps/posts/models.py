@@ -3,12 +3,9 @@ Description of Models in the Posts app
 """
 
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
 
 from apps.users.models import User
-
-# Create your models here.
 
 
 class Post(models.Model):
@@ -21,7 +18,7 @@ class Post(models.Model):
         (2, "Video"),
         (3, "Music"),
         (4, "Image"),
-        (5, "Other"),
+        (0, "Other"),
     ]
     title = models.CharField(max_length=100)
     description = models.TextField()
@@ -31,16 +28,8 @@ class Post(models.Model):
     )
     date_posted = models.DateTimeField(default=timezone.now)
     owner = models.ForeignKey(User, related_name="users_post", on_delete=models.CASCADE)
-    file_type = models.CharField(
-        max_length=10, choices=FILE_TYPE_CHOICES, default="other"
-    )
+    file_type = models.IntegerField(choices=FILE_TYPE_CHOICES, default=0)
     is_private = models.BooleanField(default=False)
-
-    def get_absolute_url(self):
-        """
-        Generates and returns url to a particular post model instance
-        """
-        return reverse("Posts-detail", kwargs={"pk": self.pk})
 
     def __str__(self):
         """
@@ -58,6 +47,10 @@ class Comment(models.Model):
     """
 
     comment_text = models.TextField()
-    author = models.ForeignKey(User, related_name="comment_author",on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, related_name="comment_post",on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User, related_name="comment_author", on_delete=models.CASCADE
+    )
+    post = models.ForeignKey(
+        Post, related_name="comment_post", on_delete=models.CASCADE
+    )
     comment_date_time = models.DateTimeField(editable=False, default=timezone.now)

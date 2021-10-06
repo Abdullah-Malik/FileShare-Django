@@ -1,3 +1,30 @@
 {% extends "posts_list.html" %}
+{% load static %}
 {% block top-content %}
+<script src="{% static 'posts/search.js' %}"></script>
+
+<!-- Top section with Image and Search Bar -->
+<section class="section-color text-light p-5 p-lg-0 pt-lg-5 text-center text-sm-start">
+    <div class="container">
+        <div class="d-sm-flex align-items-center justify-content-between">
+            <div>
+                <h1><span class="text-warning"> Share Files Seamlessly </span></h1>
+                <p class="lead my-4"> FileShare is a free search engine which allows you to search, preview and download
+                    millions of files into your devices</p>
+                <form action="{% url 'post_search' %}" class="form-inline justify-content-center pb-3" method="GET">
+                    <input class="form-control mr-sm-2" id='q' value="{{ request.GET.q }}" type="text"
+                        aria-label="Search" name="q">
+                    <button id="search_button" class="btn btn-primary my-2 my-sm-0" type="button">Search</button>
+                </form>
+            </div>
+            <img class="img-fluid w-50 d-none d-sm-block" src="{% static 'fileshare.svg' %}" alt="" />
+        </div>
+    </div>
+</section>
+
+<script> 
+let fetchBtn = document.getElementById("search_button");
+fetchBtn.addEventListener("click", buttonclickhandler);
+</script>
+
 {% endblock %}

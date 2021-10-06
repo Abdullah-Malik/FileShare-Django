@@ -9,23 +9,22 @@
 <!------ Include the above in your HEAD tag ---------->
 
 <div class="Register-reg-panel">
-    <div class="login-info-box">        
+    <div class="login-info-box">
         <label id="label-register" for="log-reg-show">Login</label>
-        <input type="radio" name="active-log-panel" id="log-reg-show"  checked="checked">
+        <input type="radio" name="active-log-panel" id="log-reg-show" checked="checked">
     </div>
-                        
-     
+    
     <div class="white-panel">
         <div class="login-show">
             <h2>Signup</h2>
-           <form action="" method="POST" enctype="multipart/form-data">
+            <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form | crispy }}
                 <input type="submit">
             </form>
             <div class="border-top pt-3">
                 <small class="text-muted">
-                    Already have an account? <a class="ml-2" href="{% url 'login' %}" >Log In</a>
+                    Already have an account? <a class="ml-2" href="{% url 'login' %}">Log In</a>
                 </small>
             </div>
         </div>

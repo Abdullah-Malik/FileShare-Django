@@ -4,12 +4,14 @@ Views used in Restful APIs of posts app
 
 from django.db.models import Q
 from django.http.response import JsonResponse
+from rest_framework import generics
+from rest_framework.parsers import JSONParser
 
-from ..models import Post
-from .serializers import PostSerializer
+from ..models import Comment, Post
+from .serializers import CommentSerializer, PostSerializer
 
 
-def PostSearchAPI(request):
+def post_search_api(request):
     """
     Function finds posts matching the query sent by the user
 
@@ -27,9 +29,22 @@ def PostSearchAPI(request):
     return JsonResponse({"message": "No post matching the query found"})
 
 
-def PostCommentAPI(request):
+class PostCommentList(generics.ListCreateAPIView):
+    """
+    Function saves the comment POST request
+    """
+
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
+
+
+def post_comment_api(request):
     """
     Function saves the comment POST request
     """
     if request.method == "POST":
-        print(request.data)
+        data = JSONParser().parse(request)
+        serializer = CommentSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+        return JsonResponse(serializer.data)

@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from apps.users.api.serializers import UserSerializer
 
-from ..models import Post
+from ..models import Comment, Post
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -35,4 +35,25 @@ class PostSerializer(serializers.ModelSerializer):
             "owner",
             "file_type",
             "post_url",
+        ]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """
+    Post Serializer is used in PostSearchAPIview to serialize the
+    queryset in the view
+    """
+
+    class Meta:
+        """
+        Meta information
+        """
+
+        model = Comment
+        fields = [
+            "id",
+            "comment_text",
+            "author",
+            "post",
+            "comment_date_time",
         ]

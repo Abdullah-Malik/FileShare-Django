@@ -4,24 +4,19 @@ Views in the the Posts apps
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
-from django.http import HttpResponseForbidden
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
-    FormView,
     ListView,
     UpdateView,
 )
-from django.views.generic.detail import SingleObjectMixin
 
 from .forms import CommentsForm, PostsForm
 from .mixins import TitleDescriptionSearchMixin
 from .models import Comment, Post
-
-# Create your views here.
 
 
 class PostDashboardView(LoginRequiredMixin, ListView):
@@ -78,58 +73,8 @@ class PostDisplayView(DetailView):
         """
         context = super().get_context_data(*args, **kwargs)
         context["comments"] = Comment.objects.filter(post=self.get_object())
-        print(context["comments"])
         context["form"] = CommentsForm()
         return context
-
-
-class PostDetailFormView(SingleObjectMixin, FormView):
-    """
-    This view is used to display the form and save the comment
-    when a POST request is sent
-    """
-
-    template_name = "posts/post_detail.html"
-    form_class = CommentsForm
-    model = Post
-    context_object_name = "post"
-
-    def post(self, request, *args, **kwargs):
-        """
-        Post request is handled in this functions
-
-        Return:
-            calls the Post function of FormView class
-        """
-        if not request.user.is_authenticated:
-            return HttpResponseForbidden()
-
-        self.object = self.get_object()
-        return super().post(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        """
-        form_valid function of the FormView class is overridden to set
-        the author and post attributes
-
-        Return
-            calls the form_valid function of the base class
-        """
-        form.instance.author = self.request.user
-        form.instance.post = Post.objects.get(id=self.object.pk)
-        form.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """
-        Function redirects user to a specific page after succesful
-        comment submission
-
-        Return
-            reverse: returns actual url against the url name provided as
-            the first argument
-        """
-        return reverse("post_detail", kwargs={"pk": self.object.pk})
 
 
 class PostDetailView(View):
@@ -145,16 +90,6 @@ class PostDetailView(View):
             Returns a PostDisplayView
         """
         view = PostDisplayView.as_view()
-        return view(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        """
-        Function is called when a POST request is made
-
-        return
-            Returns a PostDetailFormView
-        """
-        view = PostDetailFormView.as_view()
         return view(request, *args, **kwargs)
 
 

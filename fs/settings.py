@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "fontawesome_free",
     "rest_framework",
     "corsheaders",
+    # "django_nose",
 ]
 
 MIDDLEWARE = [
@@ -168,3 +169,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+
+# TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
+
+# NOSE_ARGS = ["--with-coverage", "--cover-package=apps", "--cover-html", "--verbosity=1"]

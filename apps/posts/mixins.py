@@ -11,15 +11,12 @@ class TitleDescriptionSearchMixin:
 
     def get_queryset(self):
         """
-        Fetch the queryset from the parent's get_queryset
-
-        Return:
-            queryset: set of objects that meet the filteration criteria
+        queryset: set of objects that contain the query words either
+        in title or description
         """
         queryset = super().get_queryset()
 
         q = self.request.GET.get("q")
         if q:
             return queryset.filter(Q(title__icontains=q) | Q(description__icontains=q))
-        print(q, queryset)
         return queryset
