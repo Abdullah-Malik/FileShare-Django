@@ -1,0 +1,7 @@
+{% extends "posts_list.html" %}
+{% block top-content %}
+    <form action="{% url 'post_search' %}"  class="form-inline justify-content-center pb-3" method="GET">
+        <input class="form-control mr-sm-2" value="{{ request.GET.q }}" type="text" aria-label="Search" name="q">
+        <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+{% endblock %}
