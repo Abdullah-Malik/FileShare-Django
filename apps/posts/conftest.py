@@ -24,3 +24,19 @@ def post(db, post_factory):
 def comment(db, comment_factory):
     comment = comment_factory.create()
     return comment
+
+
+@pytest.fixture
+def posts(db, post_factory):
+    number_of_posts = 10
+    posts = []
+    for post_id in range(number_of_posts):
+        posts.append(post_factory.create(title=f'post {post_id}'))
+    return posts
+
+
+@pytest.fixture
+def private_post(db, post_factory):
+    post = post_factory.create(is_private=True)
+    return post
+

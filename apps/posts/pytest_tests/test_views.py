@@ -169,3 +169,35 @@ def test_logged_in_user_can_create_post(client, user):
     assert Post.objects.last().title == "new title"
     assert response["location"] == dashboard_url
     assert response.status_code == 302
+
+def test_list_view_homepage(client, posts):
+    
+    post_id = 9
+    
+    home_url = reverse(HOME_URL_NAME)
+    response = client.get(home_url)
+
+    assert response.status_code == 200
+    assert response.context["Posts"].count() == 10
+
+    for post in response.context['Posts']:
+        assert post.title == f"post {post_id}"
+        post_id -= 1
+
+   
+def test_private_post_not_visible_to_visitors(client, private_post):
+    home_url = reverse(HOME_URL_NAME)
+    response = client.get(home_url)
+
+    assert response.status_code == 200
+    assert response.context["Posts"].count() == 0
+
+def test_private_post_visible_to_original_author(client, post):
+
+    client.force_login(post.owner)
+    
+    home_url = reverse(HOME_URL_NAME)
+    response = client.get(home_url)
+
+    assert response.status_code == 200
+    assert response.context["Posts"].count() == 1
