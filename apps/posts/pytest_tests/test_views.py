@@ -1,3 +1,7 @@
+"""
+Tests for views in posts app
+"""
+
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
@@ -78,6 +82,9 @@ def test_redirection_in_views(client, post, url_name, status_code):
 def test_post_update_delete_when_user_is_not_author(
     post, user, client, url_name, status_code
 ):
+    """
+    Testing post update and delete when user is not the real author
+    """
     client.force_login(user)
     url = reverse(url_name, args=(post.id,))
     response = client.get(url)
@@ -86,8 +93,8 @@ def test_post_update_delete_when_user_is_not_author(
 
 def test_delete_post_with_user_real_author(post, client):
     """
-    Test to check if post is updated when the original author is
-    updating it
+    Test to check if post is deleted when the original author is
+    deleting it
     """
 
     client.force_login(post.owner)
@@ -100,6 +107,10 @@ def test_delete_post_with_user_real_author(post, client):
 
 
 def test_update_post_with_user_real_author(post, client):
+    """
+    Test to check if post is updated when the original author is
+    updating it
+    """
 
     client.force_login(post.owner)
     url = reverse(POST_UPDATE_URL_NAME, args=(post.id,))
@@ -131,7 +142,7 @@ def test_logged_in_can_access_dashboard_update_delete_view(
     client, post, url_name, status_code
 ):
     """
-    Testing redirection in views where login is required
+    Testing if user can access dashboard if he's logged in
     """
 
     client.force_login(post.owner)
@@ -146,6 +157,9 @@ def test_logged_in_can_access_dashboard_update_delete_view(
 
 
 def test_logged_in_user_can_create_post(client, user):
+    """
+    Testing user can create post after logging in
+    """
 
     client.force_login(user)
     post_create_url = reverse(POST_CREATE_URL_NAME)
@@ -170,32 +184,42 @@ def test_logged_in_user_can_create_post(client, user):
     assert response["location"] == dashboard_url
     assert response.status_code == 302
 
+
 def test_list_view_homepage(client, posts):
-    
-    post_id = 9
-    
+    """
+    Testing if 10 posts are displayed on the homepage
+    """
+
+    post_id = 10
+
     home_url = reverse(HOME_URL_NAME)
     response = client.get(home_url)
 
     assert response.status_code == 200
     assert response.context["Posts"].count() == 10
 
-    for post in response.context['Posts']:
+    for post in response.context["Posts"]:
         assert post.title == f"post {post_id}"
         post_id -= 1
 
-   
+
 def test_private_post_not_visible_to_visitors(client, private_post):
+    """
+    Testing if private post should not be visible to visitors
+    """
     home_url = reverse(HOME_URL_NAME)
     response = client.get(home_url)
 
     assert response.status_code == 200
     assert response.context["Posts"].count() == 0
 
-def test_private_post_visible_to_original_author(client, post):
 
+def test_private_post_visible_to_original_author(client, post):
+    """
+    Testing if private post is visible to original author
+    """
     client.force_login(post.owner)
-    
+
     home_url = reverse(HOME_URL_NAME)
     response = client.get(home_url)
 

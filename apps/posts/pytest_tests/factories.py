@@ -1,3 +1,7 @@
+"""
+Factories for testing posts app
+"""
+
 import factory
 from faker import Faker
 
@@ -8,7 +12,13 @@ from apps.users.models import User
 
 
 class UserFactory(factory.django.DjangoModelFactory):
+    """
+    User Factory is used for creating a user
+    """
     class Meta:
+        """
+        Meta information
+        """
         model = User
 
     username = factory.Faker("name")
@@ -17,7 +27,13 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 class PostFactory(factory.django.DjangoModelFactory):
+    """
+    User Factory is used for creating a post
+    """
     class Meta:
+        """
+        Meta information
+        """
         model = Post
 
     title = factory.Faker("sentence")
@@ -30,7 +46,13 @@ class PostFactory(factory.django.DjangoModelFactory):
 
 
 class CommentFactory(factory.django.DjangoModelFactory):
+    """
+    User Factory is used for creating a comment
+    """
     class Meta:
+        """
+        Meta information
+        """
         model = Comment
 
     post = factory.SubFactory(PostFactory)
