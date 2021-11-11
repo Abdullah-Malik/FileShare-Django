@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <h1 >Create new post</h1>
-    <div>
-        <form action="" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{form | crispy }}
-            <input type="submit">
-        </form>
+<main role="main" class="container pt-4 pb-5" id="my_container" data-url="">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Create new post</h1>
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form | crispy }}
+                <input type="submit">
+            </form>
+        </div>
     </div>
+</main>
 {% endblock content %}

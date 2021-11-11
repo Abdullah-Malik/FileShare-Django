@@ -26,7 +26,7 @@ class CommentsForm(forms.ModelForm):
 
 class PostsForm(forms.ModelForm):
     """
-    PostsForm is used in the PostCreateView and PostUpdateView to enable 
+    PostsForm is used in the PostCreateView and PostUpdateView to enable
     users to create and update posts
     """
 
@@ -44,4 +44,3 @@ class PostsForm(forms.ModelForm):
             "file_type",
             "is_private",
         ]
-        widgets = {"file_type": forms.RadioSelect()}

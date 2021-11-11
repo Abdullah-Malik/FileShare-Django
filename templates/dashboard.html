@@ -1,13 +1,18 @@
 {% extends "posts_list.html" %}
 {% block top-content %}
-  {% if messages %}
+<!-- Displaying Messages here-->
+{% if messages %}
+<main role="main" class="container pt-4" id="my_container" data-url="">
+  <div class="row">
+    <div class="col-md-12">
       <div class="alert alert-success">
-        <div class="container">
-            {% for message in messages %}
-            {{ message }}
-            <br/>
-            {% endfor %}
-        </div>
+        {% for message in messages %}
+        {{ message }}
+        <br />
+        {% endfor %}
       </div>
-  {% endif %}
+    </div>
+  </div>
+</main>
+{% endif %}
 {% endblock %}
